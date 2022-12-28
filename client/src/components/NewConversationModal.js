@@ -1,27 +1,63 @@
-import React from 'react'
-import { ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import React, { useState } from 'react'
+import {
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Form,
+    Input,
+    FormGroup,
+    Label,
+} from 'reactstrap'
+import { useContacts } from '../contexts/ContactsProvider'
+import { useConversations } from '../contexts/ConversationsProviver'
 
 export default function NewConversationModal({ closeModal }) {
+    const [selectedContactIds, setSelectedContactIds] = useState([])
+
+    const { contacts } = useContacts()
+    const { createConversation } = useConversations()
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+
+        createConversation(selectedContactIds)
+        closeModal()
+    }
+
+    const handleCheckboxChange = (contactId) => {
+        setSelectedContactIds((prevSelectedContactIds) => {
+            if (prevSelectedContactIds.includes(contactId)) {
+                return prevSelectedContactIds.filter(
+                    (prevId) => prevId !== contactId
+                )
+            } else {
+                return [...prevSelectedContactIds, contactId]
+            }
+        })
+    }
+
     return (
         <>
-            <ModalHeader toggle={closeModal}></ModalHeader>
+            <ModalHeader toggle={closeModal}> Create Conversation </ModalHeader>
             <ModalBody>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
+                <Form onSubmit={handleSubmit}>
+                    {contacts.map((contact) => (
+                        <FormGroup key={contact.id}>
+                            {console.log(contact)}
+                            <Input
+                                type="checkbox"
+                                value={selectedContactIds.includes(contact.id)}
+                                name={contact.name}
+                                onChange={() =>
+                                    handleCheckboxChange(contact.id)
+                                }
+                            />{' '}
+                            <Label check>{contact.name}</Label>
+                        </FormGroup>
+                    ))}
+                    <button className="btn btn-primary">Create</button>
+                </Form>
             </ModalBody>
-            <ModalFooter>
-                {/* <Button color="primary" onClick={this.toggle}>
-                    Do Something
-                </Button>{' '}
-                <Button color="secondary" onClick={this.toggle}>
-                    Cancel
-                </Button> */}
-            </ModalFooter>
         </>
     )
 }
