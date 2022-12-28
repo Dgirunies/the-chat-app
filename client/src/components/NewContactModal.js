@@ -7,15 +7,18 @@ import {
     Input,
     Label,
 } from 'reactstrap'
+import { useContacts } from '../contexts/ContactsProvider'
 
 export default function NewContactModal({ closeModal }) {
     const [contactId, setContactId] = useState('')
     const [contactName, setContactName] = useState('')
 
+    const { createContact } = useContacts()
+
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        // createContact(contactId, contactName)
+        createContact(contactId, contactName)
         closeModal()
     }
     return (
