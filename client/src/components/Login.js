@@ -7,7 +7,6 @@ export default function Login({ onIdSubmit }) {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        console.log("on submit", userIdInput)
         onIdSubmit(userIdInput)
     }
 
